@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: 004-create-enums
+      author: gtr3base
+      changes:
+        - sql:
+            sql: CREATE TYPE userrole AS ENUM ('USER', 'ADMIN');

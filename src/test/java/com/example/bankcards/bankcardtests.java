@@ -1,10 +1,10 @@
-package com.gtr3base.BCardManagingSys;
+package com.example.bankcards;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class BCardManagingSysApplicationTests {
+class bankcardtests {
 
 	@Test
 	void contextLoads() {

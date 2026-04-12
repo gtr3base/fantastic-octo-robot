@@ -1,0 +1,61 @@
+package com.example.bankcards.service;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.util.Date;
+import java.util.Map;
+import java.util.function.Function;
+
+@Slf4j
+@Service
+public class JwtService {
+    private final Key key;
+
+    @Value("${bankcards.jwt.expires-in-ms}")
+    private long expirationMs;
+
+    private final JwtParser jwtParser;
+    private Long userId;
+
+    public JwtService(
+            @Value("${bankcards.jwt.secret}") String secret
+    ) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.jwtParser = Jwts.parserBuilder().setSigningKey(key).build();
+    }
+
+    public String generateToken(Integer userId, String email, String role) {
+        long now = System.currentTimeMillis();
+        return Jwts.builder()
+                .setSubject(String.valueOf(userId))
+                .setClaims(Map.of("email", email, "role", role))
+                .setIssuedAt(new Date(now))
+                .setExpiration(new Date(now + expirationMs))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    public String extractEmail(String token) {
+        return extractClaim(token, claims -> claims.get("email", String.class));
+    }
+
+    public boolean isExpired(String token) {
+        Date exp = Jwts.parserBuilder().setSigningKey(key).build()
+                .parseClaimsJws(token).getBody().getExpiration();
+        return exp.before(new Date());
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+        final Claims claims = jwtParser.parseClaimsJws(token).getBody();
+        return claimsResolver.apply(claims);
+    }
+}

@@ -5,27 +5,30 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: hypadJ
+
   jpa:
     hibernate:
       ddl-auto: validate
     properties:
       hibernate:
-        default_schema: "bank_card_schema"
         format_sql: true
       open-in-view: false
+    show-sql: true
+
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.yaml
     drop-first: false
+    default-schema: "bank_card_schema"
 
 logging:
   level:
     com:
       gtr3base:
-        BCardManagingSys:
+        bankcards:
           security: TRACE
 
-BCardManagingSys:
+bankcards:
   jwt:
     secret: "3ecf5388e220da9e0f919485deb676d8bee3aec046a779353b463418511ee622"
     expires-in-ms: 360000
@@ -39,4 +42,4 @@ springdoc:
     path: /v3/api-docs
 
 server:
-  port: 8084
+  port: 8080

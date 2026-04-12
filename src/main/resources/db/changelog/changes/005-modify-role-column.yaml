@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: 005-modify-role-type
+      author: gtr3base
+      changes:
+        - modifyDataType:
+            tableName: users
+            columnName: role
+            newDataType: userrole

@@ -1,13 +1,13 @@
-package com.gtr3base.BCardManagingSys;
+package com.example.bankcards;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BCardManagingSysApplication {
+public class bankcards {
 
 	public static void main(String[] args) {
-		SpringApplication.run(BCardManagingSysApplication.class, args);
+		SpringApplication.run(bankcards.class, args);
 	}
 
 }

@@ -1,0 +1,11 @@
+package com.example.bankcards.dto.requests;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
+public record TransferRequest(
+        @NotNull Long fromCardId,
+        @NotNull Long toCardId,
+        @NotNull @Min(value = 1, message = "Transfer amount must be at least 1 cent") Long amount
+) {
+}
