@@ -1,4 +1,4 @@
-package com.example.bankcards;
+package com.example.bankcards.service;
 
 import com.example.bankcards.dto.requests.LoginRequest;
 import com.example.bankcards.dto.requests.RegisterRequest;
@@ -9,9 +9,6 @@ import com.example.bankcards.enums.UserRole;
 import com.example.bankcards.exception.LoginException;
 import com.example.bankcards.mappers.UserMapper;
 import com.example.bankcards.repository.UserRepository;
-import com.example.bankcards.service.JwtService;
-import com.example.bankcards.service.RefreshTokenService;
-import com.example.bankcards.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +19,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

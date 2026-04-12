@@ -1,4 +1,4 @@
-package com.example.bankcards;
+package com.example.bankcards.service;
 
 import com.example.bankcards.dto.requests.TransferRequest;
 import com.example.bankcards.dto.responses.CardResponse;
@@ -8,7 +8,6 @@ import com.example.bankcards.enums.CardStatus;
 import com.example.bankcards.exception.CardOperationException;
 import com.example.bankcards.mappers.CardMapper;
 import com.example.bankcards.repository.CardRepository;
-import com.example.bankcards.service.CardService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

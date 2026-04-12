@@ -31,7 +31,7 @@ public class Configuration {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(r ->
                         r.requestMatchers("/api/admin/**").hasAnyAuthority("ADMIN")
-                                .requestMatchers("/login", "/register", "/", "/api/user/**").permitAll()
+                                .requestMatchers("/login", "/register", "/", "/api/user/**", "/swagger-ui/**", "/docs/**").permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 

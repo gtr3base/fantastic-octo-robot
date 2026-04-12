@@ -1,0 +1,527 @@
+openapi: 3.1.0
+info:
+  title: Bank Cards API
+  description: API for managing bank cards and transfers
+  contact:
+    name: Gtr3base
+    url: https://github.com/gtr3base
+  version: "1.0"
+servers:
+- url: http://localhost:8080
+  description: Generated server url
+security:
+- bearerAuth: []
+paths:
+  /api/admin/users/{userId}:
+    get:
+      tags:
+      - admin-user-controller
+      operationId: getUserById
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+    put:
+      tags:
+      - admin-user-controller
+      operationId: updateUser
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+    delete:
+      tags:
+      - admin-user-controller
+      operationId: deleteUser
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /api/user/register:
+    post:
+      tags:
+      - user-controller
+      operationId: registerUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /api/user/refresh:
+    post:
+      tags:
+      - user-controller
+      operationId: refreshToken
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshTokenRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /api/user/login:
+    post:
+      tags:
+      - user-controller
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /api/user/cards/transfer:
+    post:
+      tags:
+      - user-card-controller
+      operationId: transfer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TransferRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /api/admin/cards:
+    get:
+      tags:
+      - admin-card-controller
+      operationId: getAllCards
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CardResponse"
+    post:
+      tags:
+      - admin-card-controller
+      operationId: createCard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CardRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardResponse"
+  /api/user/cards/{cardId}/block:
+    patch:
+      tags:
+      - user-card-controller
+      operationId: blockCard
+      parameters:
+      - name: cardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardResponse"
+  /api/admin/cards/{cardId}/activate:
+    patch:
+      tags:
+      - admin-card-controller
+      operationId: activateCard
+      parameters:
+      - name: cardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardResponse"
+  /api/user/cards:
+    get:
+      tags:
+      - user-card-controller
+      operationId: getMyCards
+      parameters:
+      - name: search
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 0
+      - name: size
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 10
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageCardResponse"
+  /api/user/cards/{cardId}/balance:
+    get:
+      tags:
+      - user-card-controller
+      operationId: getBalance
+      parameters:
+      - name: cardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BalanceResponse"
+  /api/admin/users:
+    get:
+      tags:
+      - admin-user-controller
+      operationId: getAllUsers
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserResponse"
+  /api/admin/users/{userId}/cards:
+    get:
+      tags:
+      - admin-user-controller
+      operationId: getUserCards
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CardResponse"
+  /api/admin/cards/{cardId}:
+    delete:
+      tags:
+      - admin-card-controller
+      operationId: deleteCard
+      parameters:
+      - name: cardId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+components:
+  schemas:
+    UserUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+          format: email
+          maxLength: 100
+          minLength: 0
+        password:
+          type: string
+          maxLength: 255
+          minLength: 6
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        surname:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum:
+          - ADMIN
+          - USER
+        createdAt:
+          type: string
+          format: date-time
+    RegisterRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 50
+          minLength: 1
+        surname:
+          type: string
+          maxLength: 50
+          minLength: 1
+        email:
+          type: string
+          format: email
+          maxLength: 100
+          minLength: 0
+        password:
+          type: string
+          maxLength: 255
+          minLength: 6
+      required:
+      - email
+      - name
+      - password
+      - surname
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+    RefreshTokenRequest:
+      type: object
+      properties:
+        token:
+          type: string
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          maxLength: 255
+          minLength: 6
+      required:
+      - email
+      - password
+    TransferRequest:
+      type: object
+      properties:
+        fromCardId:
+          type: integer
+          format: int64
+        toCardId:
+          type: integer
+          format: int64
+        amount:
+          type: integer
+          format: int64
+          minimum: 1
+      required:
+      - amount
+      - fromCardId
+      - toCardId
+    CardRequest:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+          minLength: 1
+          pattern: "\\d{4} \\d{4} \\d{4} \\d{4}"
+        ownerEmail:
+          type: string
+          minLength: 1
+        expirationDate:
+          type: string
+          minLength: 1
+          pattern: "(0[1-9]|1[0-2])/\\d{2}"
+        balance:
+          type: integer
+          format: int64
+      required:
+      - balance
+      - cardNumber
+      - expirationDate
+      - ownerEmail
+    CardResponse:
+      type: object
+      properties:
+        cardNumber:
+          type: string
+        owner:
+          type: string
+        expirationDate:
+          type: string
+        balance:
+          type: integer
+          format: int64
+    PageCardResponse:
+      type: object
+      properties:
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/CardResponse"
+        number:
+          type: integer
+          format: int32
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        first:
+          type: boolean
+        last:
+          type: boolean
+        numberOfElements:
+          type: integer
+          format: int32
+        pageable:
+          $ref: "#/components/schemas/PageableObject"
+        empty:
+          type: boolean
+    PageableObject:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+        sort:
+          $ref: "#/components/schemas/SortObject"
+        paged:
+          type: boolean
+        pageSize:
+          type: integer
+          format: int32
+        pageNumber:
+          type: integer
+          format: int32
+        unpaged:
+          type: boolean
+    SortObject:
+      type: object
+      properties:
+        empty:
+          type: boolean
+        sorted:
+          type: boolean
+        unsorted:
+          type: boolean
+    BalanceResponse:
+      type: object
+      properties:
+        cardId:
+          type: integer
+          format: int64
+        balance:
+          type: integer
+          format: int64
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: JWT auth
+      in: header
+      scheme: bearer
+      bearerFormat: JWT

@@ -39,7 +39,7 @@ springdoc:
     enabled: true
     path: /swagger-ui.html
   api-docs:
-    path: /v3/api-docs
+    path: /docs/openapi.yaml
 
 server:
   port: 8080
