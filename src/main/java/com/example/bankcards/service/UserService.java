@@ -56,8 +56,10 @@ public class UserService {
             throw new LoginException(String.format(USER_ALREADY_EXISTS_MSG, email));
         }
         User user = convertToEntity(req);
+        log.info("Password before encoding: {}", user.getPassword());
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        log.info("Password after encoding: {}", user.getPassword());
 
         userRepository.save(user);
 
@@ -80,7 +82,7 @@ public class UserService {
         }
 
         String loginToken = jwtService.generateToken(user.getId().intValue(),user.getEmail(),user.getRole().name());
-        RefreshToken refreshToken = refreshTokenService.createRefToken(loginToken);
+        RefreshToken refreshToken = refreshTokenService.createRefToken(req.email());
 
         if(refreshToken == null){
             log.warn("Invalid refresh token");

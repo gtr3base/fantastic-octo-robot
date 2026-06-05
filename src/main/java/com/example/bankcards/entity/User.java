@@ -63,6 +63,7 @@ public class User {
     @NotNull(message = "Role is required")
     private UserRole role = UserRole.USER;
 
+    @Builder.Default
     @Column(name = "created_at")
     @PastOrPresent(message = "Creation date cannot be in the future")
     private LocalDateTime createdAt = LocalDateTime.now();

@@ -1,6 +1,7 @@
 package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.requests.CardRequest;
+import com.example.bankcards.dto.responses.CardAdminResponse;
 import com.example.bankcards.dto.responses.CardResponse;
 import com.example.bankcards.service.CardService;
 import jakarta.validation.Valid;
@@ -28,14 +29,14 @@ public class AdminCardController {
     }
 
     @PostMapping
-    public ResponseEntity<CardResponse> createCard(@Valid @RequestBody CardRequest cardRequest) {
-        CardResponse response = cardService.createCard(cardRequest);
+    public ResponseEntity<CardAdminResponse> createCard(@Valid @RequestBody CardRequest cardRequest) {
+        CardAdminResponse response = cardService.createCard(cardRequest);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<CardResponse>> getAllCards() {
-        List<CardResponse> cards = cardService.getAllCards();
+    public ResponseEntity<List<CardAdminResponse>> getAllCards() {
+        List<CardAdminResponse> cards = cardService.getAllCards();
         return ResponseEntity.ok(cards);
     }
 

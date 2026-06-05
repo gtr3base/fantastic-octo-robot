@@ -41,6 +41,6 @@ databaseChangeLog:
 
               - column:
                   name: balance
-                  type: BIGINT
+                  type: NUMERIC(19,2)
                   constraints:
                     nullable: false

@@ -3,6 +3,7 @@ package com.example.bankcards.service;
 import com.example.bankcards.dto.requests.CardRequest;
 import com.example.bankcards.dto.requests.TransferRequest;
 import com.example.bankcards.dto.responses.BalanceResponse;
+import com.example.bankcards.dto.responses.CardAdminResponse;
 import com.example.bankcards.dto.responses.CardResponse;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.enums.CardStatus;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +42,7 @@ public class CardService {
         this.cardMapper = cardMapper;
     }
 
-    public CardResponse createCard(CardRequest cardRequest){
+    public CardAdminResponse createCard(CardRequest cardRequest){
         log.info("Creating new card for owner: {}", cardRequest.ownerEmail());
 
         Card card = cardMapper.toCard(cardRequest);
@@ -49,7 +51,7 @@ public class CardService {
 
         log.info("Card created successfully with ID: {}", card.getId());
 
-        return cardMapper.toCardResponse(savedCard);
+        return cardMapper.toCardAdminResponse(savedCard);
     }
 
     @Transactional
@@ -109,7 +111,7 @@ public class CardService {
         Card card = cardRepository.findCardById(cardId)
                 .orElseThrow(() -> new CardNotFoundException(String.format(CARD_NOT_FOUND, cardId)));
 
-        if(card.getBalance() > 0){
+        if (card.getBalance().compareTo(BigDecimal.ZERO) > 0) {
             log.warn("Cannot delete card with ID: {} because it has non-zero balance: {}", cardId, card.getBalance());
             throw new CardOperationException(CARD_DELETION_WITH_BALANCE);
         }
@@ -135,13 +137,13 @@ public class CardService {
             throw new CardOperationException(CARD_IS_NOT_ACTIVE);
         }
 
-        if(fromC.getBalance() < req.amount()){
+        if (fromC.getBalance().compareTo(BigDecimal.valueOf(req.amount())) < 0) {
             log.warn("Cannot transfer, insufficient funds");
             throw new CardOperationException(INSUFFICIENT_FUNDS);
         }
 
-        fromC.setBalance(fromC.getBalance() - req.amount());
-        toC.setBalance(toC.getBalance() + req.amount());
+        fromC.setBalance(fromC.getBalance().subtract(BigDecimal.valueOf(req.amount())));
+        toC.setBalance(toC.getBalance().add(BigDecimal.valueOf(req.amount())));
 
         cardRepository.save(fromC);
         cardRepository.save(toC);
@@ -152,15 +154,15 @@ public class CardService {
     public BalanceResponse getCardBalance(Long userId, Long cardId) {
         log.info("Getting card balance for owner: {}", userId);
         Card card = getCardIfBelongsToUser(cardId, userId);
-        return new BalanceResponse(card.getId(), card.getBalance());
+        return new BalanceResponse(card.getId(), card.getBalance().longValue());
     }
 
-    public List<CardResponse> getAllCards() {
+    public List<CardAdminResponse> getAllCards() {
         log.info("Getting all cards");
         List<Card> cards = cardRepository.findAll();
 
         return cards.stream()
-                .map(cardMapper::toCardResponse)
+                .map(cardMapper::toCardAdminResponse)
                 .collect(Collectors.toList());
     }
 
@@ -172,6 +174,7 @@ public class CardService {
         }else {
             cards = cardRepository.findByOwnerId(userId, pageable);
         }
+        log.info("Cards numbers: {}", cards.getNumber());
         return cards.map(cardMapper::toCardResponse);
     }
 

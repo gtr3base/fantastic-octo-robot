@@ -9,6 +9,7 @@ import com.example.bankcards.exception.TokenRefreshException;
 import com.example.bankcards.repository.RefreshTokenRepository;
 import com.example.bankcards.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -23,6 +24,7 @@ public class RefreshTokenService {
 
     private static final String REFRESH_TOKEN_EXPIRED = "Refresh token expired";
     private static final String LOGIN_NOT_FOUND = "Email %s not found";
+    private static final String TOKEN_NOT_FOUND = "Token not found";
 
     public RefreshTokenService(JwtService jwtService, RefreshTokenRepository refreshTokenRepository, UserRepository userRepository) {
         this.jwtService = jwtService;
@@ -30,11 +32,15 @@ public class RefreshTokenService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public RefreshToken createRefToken(String email){
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new LoginException(String.format(LOGIN_NOT_FOUND, email)));
 
-        refreshTokenRepository.deleteByUser(user);
+        refreshTokenRepository.findByUserEmail(email).ifPresent(existingToken -> {
+            refreshTokenRepository.delete(existingToken);
+            refreshTokenRepository.flush();
+        });
 
         RefreshToken rToken = RefreshToken
                 .builder()

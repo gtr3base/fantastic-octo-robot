@@ -2,13 +2,13 @@ spring:
   application:
     name: BCardManagingSys
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    url: jdbc:postgresql://localhost:5432/postgres1
     username: postgres
     password: hypadJ
 
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -20,6 +20,10 @@ spring:
     change-log: classpath:/db/changelog/db.changelog-master.yaml
     drop-first: false
     default-schema: "bank_card_schema"
+
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
 
 logging:
   level:

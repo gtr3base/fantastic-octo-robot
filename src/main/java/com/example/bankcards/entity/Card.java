@@ -1,6 +1,7 @@
 package com.example.bankcards.entity;
 
 import com.example.bankcards.enums.CardStatus;
+import com.example.bankcards.util.MoneyConverter;
 import com.example.bankcards.util.YearMonthDateAttributeConverter;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.CascadeType;
@@ -9,6 +10,7 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,6 +26,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.YearMonth;
 
 @Builder
@@ -42,7 +45,7 @@ public class Card {
     @Column(name = "card_number")
     private String cardNumber;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
@@ -55,10 +58,11 @@ public class Card {
     @Column(name = "status", nullable = false)
     private CardStatus status;
 
+    @Convert(converter = MoneyConverter.class)
     @Column(name = "balance", nullable = false)
     @NotNull(message = "balance is required")
     @PositiveOrZero(message = "Balance must be positive or zero")
-    private Long balance;
+    private BigDecimal balance;
 
     public boolean isExpired() {
         return YearMonth.now().isAfter(this.expirationDate);

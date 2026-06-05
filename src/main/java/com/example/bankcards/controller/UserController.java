@@ -4,15 +4,19 @@ import com.example.bankcards.dto.requests.LoginRequest;
 import com.example.bankcards.dto.requests.RefreshTokenRequest;
 import com.example.bankcards.dto.requests.RegisterRequest;
 import com.example.bankcards.dto.responses.AuthResponse;
+import com.example.bankcards.dto.responses.UserResponse;
 import com.example.bankcards.service.RefreshTokenService;
 import com.example.bankcards.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Principal;
 
 @RestController
 @RequestMapping("/api/user")
@@ -42,5 +46,14 @@ public class UserController {
         AuthResponse response = refreshTokenService.processRefreshToken(req);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserResponse> userProfile(Principal principal){
+        Long userId = userService.getCurrentUserId(principal);
+
+        UserResponse uR = userService.getUserById(userId);
+
+        return ResponseEntity.ok(uR);
     }
 }

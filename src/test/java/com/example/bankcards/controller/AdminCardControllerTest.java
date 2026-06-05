@@ -1,6 +1,7 @@
 package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.requests.CardRequest;
+import com.example.bankcards.dto.responses.CardAdminResponse;
 import com.example.bankcards.dto.responses.CardResponse;
 import com.example.bankcards.service.CardService;
 import org.junit.jupiter.api.DisplayName;
@@ -34,11 +35,11 @@ public class AdminCardControllerTest {
     @DisplayName("Create Card - Success")
     void createCard_Success() {
         CardRequest request = mock(CardRequest.class);
-        CardResponse mockResponse = mock(CardResponse.class);
+        CardAdminResponse mockResponse = mock(CardAdminResponse.class);
 
         when(cardService.createCard(request)).thenReturn(mockResponse);
 
-        ResponseEntity<CardResponse> response = adminCardController.createCard(request);
+        ResponseEntity<CardAdminResponse> response = adminCardController.createCard(request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isEqualTo(mockResponse);
@@ -48,11 +49,11 @@ public class AdminCardControllerTest {
     @Test
     @DisplayName("Get All Cards - Success")
     void getAllCards_Success() {
-        CardResponse card1 = mock(CardResponse.class);
-        CardResponse card2 = mock(CardResponse.class);
+        CardAdminResponse card1 = mock(CardAdminResponse.class);
+        CardAdminResponse card2 = mock(CardAdminResponse.class);
         when(cardService.getAllCards()).thenReturn(List.of(card1, card2));
 
-        ResponseEntity<List<CardResponse>> response = adminCardController.getAllCards();
+        ResponseEntity<List<CardAdminResponse>> response = adminCardController.getAllCards();
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).hasSize(2).containsExactly(card1, card2);
