@@ -159,7 +159,7 @@ public class CardService {
 
         Card fromC = getCardIfBelongsToUser(req.fromCardId(), currentUserId);
 
-        Card toC = cardRepository.findByOwnerEmail(req.ownerEmail())
+        Card toC = cardRepository.findFirstByOwnerEmail(req.ownerEmail())
                 .orElseThrow(() -> {
                     log.warn("Receiver card not found: {}", req.ownerEmail());
                     return new CardOperationException("Receiver card not found");
