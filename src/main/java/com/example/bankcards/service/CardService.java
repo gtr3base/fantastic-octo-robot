@@ -1,6 +1,8 @@
 package com.example.bankcards.service;
 
 import com.example.bankcards.dto.requests.CardRequest;
+import com.example.bankcards.dto.requests.CardTransferRequest;
+import com.example.bankcards.dto.requests.EmailTransferRequest;
 import com.example.bankcards.dto.requests.TransferRequest;
 import com.example.bankcards.dto.responses.BalanceResponse;
 import com.example.bankcards.dto.responses.CardAdminResponse;
@@ -122,7 +124,7 @@ public class CardService {
     }
 
     @Transactional
-    public void transferBetweenOwnCards(Long userId, TransferRequest req){
+    public void transferBetweenOwnCards(Long userId, CardTransferRequest req){
         log.info("Transfer between own cards for owner: {}", userId);
         if(req.fromCardId().equals(req.toCardId())){
             log.warn("Cannot transfer between same cards for owner: {}", userId);
@@ -149,6 +151,41 @@ public class CardService {
         cardRepository.save(toC);
 
         log.info("Amount transferred successfully with ID: {}", fromC.getId());
+    }
+
+    @Transactional
+    public void transferToAnotherUserCard(Long currentUserId, EmailTransferRequest req) {
+        log.info("Transfer to another user card initiated by user: {}", currentUserId);
+
+        Card fromC = getCardIfBelongsToUser(req.fromCardId(), currentUserId);
+
+        Card toC = cardRepository.findByOwnerEmail(req.ownerEmail())
+                .orElseThrow(() -> {
+                    log.warn("Receiver card not found: {}", req.ownerEmail());
+                    return new CardOperationException("Receiver card not found");
+                });
+
+        if(!CardStatus.ACTIVE.equals(fromC.getStatus())){
+            log.warn("Cannot transfer. Sender card {} is inactive", fromC.getId());
+            throw new CardOperationException(CARD_IS_NOT_ACTIVE);
+        }
+        if(!CardStatus.ACTIVE.equals(toC.getStatus())){
+            log.warn("Cannot transfer. Receiver card {} is inactive", toC.getId());
+            throw new CardOperationException("Receiver card is not active");
+        }
+
+        if (fromC.getBalance().compareTo(BigDecimal.valueOf(req.amount())) < 0) {
+            log.warn("Cannot transfer, insufficient funds on card: {}", fromC.getId());
+            throw new CardOperationException(INSUFFICIENT_FUNDS);
+        }
+
+        fromC.setBalance(fromC.getBalance().subtract(BigDecimal.valueOf(req.amount())));
+        toC.setBalance(toC.getBalance().add(BigDecimal.valueOf(req.amount())));
+
+        cardRepository.save(fromC);
+        cardRepository.save(toC);
+
+        log.info("Successfully transferred {} from card {} to card {}", req.amount(), fromC.getId(), toC.getId());
     }
 
     public BalanceResponse getCardBalance(Long userId, Long cardId) {

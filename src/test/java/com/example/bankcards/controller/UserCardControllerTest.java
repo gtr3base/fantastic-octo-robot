@@ -1,6 +1,6 @@
 package com.example.bankcards.controller;
 
-import com.example.bankcards.dto.requests.TransferRequest;
+import com.example.bankcards.dto.requests.CardTransferRequest;
 import com.example.bankcards.dto.responses.BalanceResponse;
 import com.example.bankcards.dto.responses.CardResponse;
 import com.example.bankcards.service.CardService;
@@ -84,7 +84,7 @@ public class UserCardControllerTest {
     @Test
     @DisplayName("Transfer Between Own Cards - Success")
     void transfer_Success() {
-        TransferRequest request = new TransferRequest(100L, 200L, 5000L);
+        CardTransferRequest request = new CardTransferRequest(100L, 200L, 5000L);
         doNothing().when(cardService).transferBetweenOwnCards(userId, request);
 
         ResponseEntity<String> response = userCardController.transfer(principal, request);

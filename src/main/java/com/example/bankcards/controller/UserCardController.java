@@ -1,5 +1,7 @@
 package com.example.bankcards.controller;
 
+import com.example.bankcards.dto.requests.CardTransferRequest;
+import com.example.bankcards.dto.requests.EmailTransferRequest;
 import com.example.bankcards.dto.requests.TransferRequest;
 import com.example.bankcards.dto.responses.BalanceResponse;
 import com.example.bankcards.dto.responses.CardResponse;
@@ -53,7 +55,7 @@ public class UserCardController {
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<String> transfer(Principal principal, @Valid @RequestBody TransferRequest request) {
+    public ResponseEntity<String> transfer(Principal principal, @Valid @RequestBody CardTransferRequest request) {
         Long userId = userService.getCurrentUserId(principal);
 
         cardService.transferBetweenOwnCards(userId, request);
@@ -66,5 +68,12 @@ public class UserCardController {
 
         BalanceResponse balance = cardService.getCardBalance(userId, cardId);
         return ResponseEntity.ok(balance);
+    }
+
+    @PostMapping("/transfer/external")
+    public ResponseEntity<Void> transferToOtherUser(Principal principal, @RequestBody EmailTransferRequest request) {
+        Long userId = userService.getCurrentUserId(principal);
+        cardService.transferToAnotherUserCard(userId, request);
+        return ResponseEntity.ok().build();
     }
 }

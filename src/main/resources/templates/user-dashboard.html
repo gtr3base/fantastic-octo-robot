@@ -197,28 +197,37 @@
             color: #0f172a;
         }
 
-        /* Transfer Card */
+        /* Transfer Cards */
+        .transfer-section {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
         .transfer-card {
             background: white;
             border-radius: 28px;
             padding: 28px;
-            margin-bottom: 32px;
+            flex: 1;
+            min-width: 280px;
             box-shadow: 0 4px 14px rgba(0,0,0,0.02);
             border: 1px solid rgba(203,213,225,0.5);
         }
         .transfer-title {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 700;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
+            color: #0f172a;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
         }
         .transfer-form {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
+            display: flex;
+            flex-direction: column;
             gap: 16px;
-            align-items: end;
         }
         .form-field {
             display: flex;
@@ -237,7 +246,7 @@
             font-family: 'Inter', sans-serif;
             transition: 0.2s;
         }
-        .form-field input:focus {
+        .form-field input:focus, .form-field select:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
@@ -255,9 +264,29 @@
             align-items: center;
             gap: 8px;
             justify-content: center;
+            margin-top: 8px;
         }
         .btn-primary:hover {
             background: #2563eb;
+            transform: scale(1.02);
+        }
+        .btn-secondary {
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        .btn-secondary:hover {
+            background: #7c3aed;
             transform: scale(1.02);
         }
 
@@ -391,7 +420,7 @@
             .sidebar .nav-item { justify-content: center; }
             .user-avatar { width: 40px; height: 40px; font-size: 16px; }
             .main-content { padding: 20px; }
-            .transfer-form { grid-template-columns: 1fr; }
+            .transfer-section { flex-direction: column; }
         }
     </style>
 </head>
@@ -442,34 +471,65 @@
             </div>
         </div>
 
-
-        <div class="transfer-card">
-            <div class="transfer-title">
-                <i class="fas fa-exchange-alt text-blue-500"></i>
-                Quick Transfer
+        <!-- Two Transfer Options Side by Side -->
+        <div class="transfer-section">
+            <!-- Existing Transfer (to own card) -->
+            <div class="transfer-card">
+                <div class="transfer-title">
+                    <i class="fas fa-exchange-alt"></i>
+                    Transfer to My Card
+                </div>
+                <div class="transfer-form">
+                    <div class="form-field">
+                        <label><i class="fas fa-credit-card"></i> From Card</label>
+                        <select id="fromCard">
+                            <option value="">Select card...</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label><i class="fas fa-arrow-right"></i> To Card ID</label>
+                        <input type="number" id="toCard" placeholder="Enter your other card ID">
+                    </div>
+                    <div class="form-field">
+                        <label><i class="fas fa-dollar-sign"></i> Amount (€)</label>
+                        <input type="number" id="amount" placeholder="0.00" step="0.01">
+                    </div>
+                    <button onclick="makeTransfer()" class="btn-primary">
+                        <i class="fas fa-paper-plane"></i> Transfer
+                    </button>
+                </div>
             </div>
-            <div class="transfer-form">
-                <div class="form-field">
-                    <label><i class="fas fa-credit-card"></i> From Card</label>
-                    <select id="fromCard">
-                        <option value="">Select card...</option>
-                    </select>
+
+            <!-- Transfer to Another User (by email) -->
+            <div class="transfer-card">
+                <div class="transfer-title">
+                    <i class="fas fa-users"></i>
+                    Transfer to Another User
                 </div>
-                <div class="form-field">
-                    <label><i class="fas fa-arrow-right"></i> To Card ID</label>
-                    <input type="number" id="toCard" placeholder="Enter card ID">
+                <div class="transfer-form">
+                    <div class="form-field">
+                        <label><i class="fas fa-credit-card"></i> From Card</label>
+                        <select id="fromCardExternal">
+                            <option value="">Select card...</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label><i class="fas fa-envelope"></i> Recipient's Email</label>
+                        <input type="email" id="ownerEmail" placeholder="user@example.com">
+                        <small style="color: #64748b; font-size: 0.7rem;">Email of the card owner you're sending to</small>
+                    </div>
+                    <div class="form-field">
+                        <label><i class="fas fa-dollar-sign"></i> Amount (€)</label>
+                        <input type="number" id="amountExternal" placeholder="0.00" step="0.01">
+                    </div>
+                    <button onclick="makeTransferToUser()" class="btn-secondary">
+                        <i class="fas fa-paper-plane"></i> Send to User
+                    </button>
                 </div>
-                <div class="form-field">
-                    <label><i class="fas fa-dollar-sign"></i> Amount (€)</label>
-                    <input type="number" id="amount" placeholder="0.00" step="0.01">
-                </div>
-                <button onclick="makeTransfer()" class="btn-primary">
-                    <i class="fas fa-paper-plane"></i> Transfer
-                </button>
             </div>
         </div>
 
-
+        <!-- Cards List -->
         <div>
             <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 20px;">
                 <i class="fas fa-wallet"></i> My Cards
@@ -532,22 +592,15 @@
 
     async function loadUserInfo() {
         try {
-
             const user = await apiFetch('/api/user/profile');
-
-
             const firstName = user.name || 'Bank';
             const lastName = user.surname || 'User';
             const email = user.email || 'No email provided';
 
-
             document.getElementById('userName').innerText = `${firstName} ${lastName}`;
             document.getElementById('userEmail').innerText = email;
-
-
             const initials = firstName.charAt(0).toUpperCase() + lastName.charAt(0).toUpperCase();
             document.getElementById('userAvatar').innerText = initials;
-
         } catch (err) {
             console.error('Failed to load user info:', err);
         }
@@ -555,80 +608,67 @@
 
     async function loadCards() {
         try {
-
             const pageData = await apiFetch('/api/user/cards');
-
-
             const cards = pageData.content || [];
 
             console.log("Card data from backend:", cards);
 
             const container = document.getElementById('cardsContainer');
             const fromCardSelect = document.getElementById('fromCard');
+            const fromCardExternalSelect = document.getElementById('fromCardExternal');
 
             container.innerHTML = '';
             fromCardSelect.innerHTML = '<option value="">Select card...</option>';
+            fromCardExternalSelect.innerHTML = '<option value="">Select card...</option>';
 
             let totalBalanceSum = 0;
             let activeCount = 0;
-
 
             cards.forEach(card => {
                 const balance = card.balance || 0;
                 totalBalanceSum += balance;
                 if (card.active !== false) activeCount++;
 
-
-                fromCardSelect.innerHTML += `
-                    <option value="${card.id}">${card.cardNumber || 'Card'} - ${balance.toFixed(2)}€</option>
-                `;
-
+                const optionText = `${card.cardNumber || 'Card'} - ${balance.toFixed(2)}€`;
+                fromCardSelect.innerHTML += `<option value="${card.id}">${optionText}</option>`;
+                fromCardExternalSelect.innerHTML += `<option value="${card.id}">${optionText}</option>`;
 
                 const isBlocked = card.status === 'BLOCKED';
 
                 container.innerHTML += `
-    <div class="card-item">
-        <div class="card-header">
-            <i class="fas fa-credit-card card-chip"></i>
-
-
-            <span class="card-status ${isBlocked ? 'blocked' : ''}">
-                <i class="fas ${isBlocked ? 'fa-ban' : 'fa-circle'}"></i>
-                ${isBlocked ? 'BLOCKED' : 'ACTIVE'}
-            </span>
-        </div>
-        <div class="card-number">
-            ${card.cardNumber || '**** **** **** 0000'}
-        </div>
-        <div class="card-details">
-            <div>
-                <p>Card Holder</p>
-                <p style="font-weight: 600;">${card.owner || 'Card Holder'}</p>
-            </div>
-            <div>
-                <p>Expires</p>
-                <p style="font-weight: 600;">${card.expirationDate || '12/28'}</p>
-            </div>
-        </div>
-        <div class="card-actions">
-            <button class="card-btn card-btn-balance" onclick="checkBalance(${card.id})">
-                <i class="fas fa-chart-line"></i> Balance: ${balance.toFixed(2)}€
-            </button>
-
-
-            <button class="card-btn card-btn-block" onclick="blockCard(${card.id})">
-                <i class="fas ${isBlocked ? 'fa-check' : 'fa-ban'}"></i>
-                ${isBlocked ? `
-<div style="margin-top:10px;font-size:0.8rem;color:#cbd5e1;">
-    This card has been blocked. Contact an administrator for reactivation.
-</div>
-` : ''}
-            </button>
-        </div>
-    </div>
-`;
+                    <div class="card-item">
+                        <div class="card-header">
+                            <i class="fas fa-credit-card card-chip"></i>
+                            <span class="card-status ${isBlocked ? 'blocked' : ''}">
+                                <i class="fas ${isBlocked ? 'fa-ban' : 'fa-circle'}"></i>
+                                ${isBlocked ? 'BLOCKED' : 'ACTIVE'}
+                            </span>
+                        </div>
+                        <div class="card-number">
+                            ${card.cardNumber || '**** **** **** 0000'}
+                        </div>
+                        <div class="card-details">
+                            <div>
+                                <p>Card Holder</p>
+                                <p style="font-weight: 600;">${card.owner || 'Card Holder'}</p>
+                            </div>
+                            <div>
+                                <p>Expires</p>
+                                <p style="font-weight: 600;">${card.expirationDate || '12/28'}</p>
+                            </div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="card-btn card-btn-balance" onclick="checkBalance(${card.id})">
+                                <i class="fas fa-chart-line"></i> Balance: ${balance.toFixed(2)}€
+                            </button>
+                            <button class="card-btn card-btn-block" onclick="blockCard(${card.id})">
+                                <i class="fas ${isBlocked ? 'fa-lock' : 'fa-unlock-alt'}"></i>
+                                ${isBlocked ? 'Blocked' : 'Block'}
+                            </button>
+                        </div>
+                    </div>
+                `;
             });
-
 
             document.getElementById('totalCards').innerText = cards.length;
             document.getElementById('totalBalance').innerText = `${totalBalanceSum.toFixed(2)}€`;
@@ -654,10 +694,10 @@
         if(action) {
             try {
                 await apiFetch(`/api/user/cards/${cardId}/block`, { method: 'PATCH' });
-                showToast('Card status updated', 'success');
+                showToast('Card blocked successfully', 'success');
                 loadCards();
             } catch(e) {
-                showToast('Failed to update card', 'error');
+                showToast('Failed to block card', 'error');
             }
         }
     }
@@ -685,15 +725,15 @@
             return;
         }
 
-        const transferBtn = document.querySelector('.transfer-form .btn-primary');
+        const transferBtn = document.querySelector('.transfer-section .btn-primary');
         const originalBtnText = transferBtn.innerHTML;
         transferBtn.disabled = true;
         transferBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
         try {
-            console.log(`Attempting transfer: from=${fromCardId}, to=${toCardId}, amount=${amount}`);
+            console.log(`Attempting transfer: from=${fromCardId}, to=${toCardId}, amount=${amount}€`);
 
-            const response = await apiFetch('/api/user/cards/transfer', {
+            await apiFetch('/api/user/cards/transfer', {
                 method: 'POST',
                 body: JSON.stringify({
                     fromCardId: parseInt(fromCardId),
@@ -704,26 +744,93 @@
 
             document.getElementById('amount').value = '';
             showToast('Transfer completed successfully!', 'success');
-
             await loadCards();
-
             await loadUserInfo();
 
         } catch(error) {
             console.error('Transfer error details:', error);
-
             let errorMsg = error.message || 'Transfer failed';
-
-            if (errorMsg.includes('balance') || errorMsg.includes('insufficient')) {
+            if (errorMsg.toLowerCase().includes('balance') || errorMsg.toLowerCase().includes('insufficient')) {
                 errorMsg = 'Insufficient balance for this transfer';
-            } else if (errorMsg.includes('positive balance') || errorMsg.includes('withdraw')) {
-                errorMsg = 'Cannot transfer from a card with zero/negative balance restrictions';
-            } else if (errorMsg.includes('not found') || errorMsg.includes('invalid')) {
+            } else if (errorMsg.toLowerCase().includes('not found') || errorMsg.toLowerCase().includes('invalid')) {
                 errorMsg = 'Destination card not found. Please check the card ID.';
-            } else if (errorMsg.includes('same card') || errorMsg.includes('identical')) {
+            } else if (errorMsg.toLowerCase().includes('same') || errorMsg.toLowerCase().includes('identical')) {
                 errorMsg = 'Cannot transfer to the same card';
-            } else if (errorMsg.includes('active') || errorMsg.includes('blocked')) {
+            } else if (errorMsg.toLowerCase().includes('active') || errorMsg.toLowerCase().includes('blocked') || errorMsg.toLowerCase().includes('inactive')) {
                 errorMsg = 'One of the cards is blocked or inactive';
+            }
+            showToast(errorMsg, 'error');
+        } finally {
+            transferBtn.disabled = false;
+            transferBtn.innerHTML = originalBtnText;
+        }
+    }
+
+    async function makeTransferToUser() {
+        const fromCardId = document.getElementById('fromCardExternal').value;
+        const ownerEmail = document.getElementById('ownerEmail').value.trim();
+        const amount = parseFloat(document.getElementById('amountExternal').value);
+
+        if (!fromCardId) {
+            showToast('Please select a source card', 'error');
+            return;
+        }
+        if (!ownerEmail) {
+            showToast('Please enter recipient email address', 'error');
+            return;
+        }
+        if (!ownerEmail.includes('@') || !ownerEmail.includes('.')) {
+            showToast('Please enter a valid email address', 'error');
+            return;
+        }
+        if (isNaN(amount) || amount <= 0) {
+            showToast('Please enter a valid positive amount', 'error');
+            return;
+        }
+
+        if (amount < 0.01) {
+            showToast('Amount must be at least 0.01€', 'error');
+            return;
+        }
+
+        const transferBtn = document.querySelector('.transfer-section .btn-secondary');
+        const originalBtnText = transferBtn.innerHTML;
+        transferBtn.disabled = true;
+        transferBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+        try {
+            console.log(`Attempting external transfer: fromCard=${fromCardId}, ownerEmail=${ownerEmail}, amount=${amount}€`);            await apiFetch('/api/user/cards/transfer/external', {
+                method: 'POST',
+                body: JSON.stringify({
+                    fromCardId: parseInt(fromCardId),
+                    ownerEmail: ownerEmail,
+                    amount: amount
+                })
+            });
+
+            document.getElementById('ownerEmail').value = '';
+            document.getElementById('amountExternal').value = '';
+            document.getElementById('fromCardExternal').value = '';
+
+            showToast(`Successfully sent ${amount.toFixed(2)}€ to ${ownerEmail}!`, 'success');
+
+            await loadCards();
+            await loadUserInfo();
+
+        } catch(error) {
+            console.error('External transfer error:', error);
+            let errorMsg = error.message || 'Transfer to user failed';
+
+            if (errorMsg.toLowerCase().includes('balance') || errorMsg.toLowerCase().includes('insufficient')) {
+                errorMsg = 'Insufficient balance on selected card';
+            } else if (errorMsg.toLowerCase().includes('not found') || errorMsg.toLowerCase().includes('email')) {
+                errorMsg = 'User with this email not found. Please check the email address.';
+            } else if (errorMsg.toLowerCase().includes('active') || errorMsg.toLowerCase().includes('blocked') || errorMsg.toLowerCase().includes('inactive')) {
+                errorMsg = 'Your card or recipient\'s card is blocked or inactive';
+            } else if (errorMsg.toLowerCase().includes('own') || errorMsg.toLowerCase().includes('self')) {
+                errorMsg = 'You cannot transfer to yourself using this option';
+            } else if (errorMsg.toLowerCase().includes('no cards')) {
+                errorMsg = 'Recipient does not have any active cards to receive money';
             }
 
             showToast(errorMsg, 'error');
@@ -734,10 +841,10 @@
     }
 
     function logout() {
+        localStorage.removeItem('accessToken');
         localStorage.removeItem('token');
         window.location.href = '/login';
     }
-
 
     let currentTab = 'cards';
     function renderCurrentTab() {
@@ -745,36 +852,39 @@
             loadCards();
         } else if (currentTab === 'help') {
             document.getElementById('cardsContainer').innerHTML = `
-        <div class="transfer-card" style="grid-column:1/-1;">
-            <h3><i class="fas fa-question-circle"></i> Help Center</h3>
-            <br>
-
-            <div style="display:flex;flex-direction:column;gap:15px;">
-                <div>
-                    <strong>How do I transfer money?</strong>
-                    <p>Select a source card, enter destination card ID and amount, then click Transfer.</p>
+                <div class="transfer-card" style="grid-column:1/-1;">
+                    <h3><i class="fas fa-question-circle"></i> Help Center</h3>
+                    <br>
+                    <div style="display:flex;flex-direction:column;gap:15px;">
+                        <div>
+                            <strong>How do I transfer money to my own card?</strong>
+                            <p>Select a source card, enter destination card ID and amount, then click Transfer.</p>
+                        </div>
+                        <div>
+                            <strong>How do I send money to another user?</strong>
+                            <p>Use the "Transfer to Another User" section. Select your card, enter the recipient's email address and amount. The money will be sent to their active card.</p>
+                        </div>
+                        <div>
+                            <strong>How do I block a card?</strong>
+                            <p>Click the Block button on any active card to temporarily disable it.</p>
+                        </div>
+                        <div>
+                            <strong>What happens if the recipient has multiple cards?</strong>
+                            <p>The system will automatically find an active card belonging to the recipient to receive the funds.</p>
+                        </div>
+                        <div>
+                            <strong>Need support?</strong>
+                            <p>Email: support@bankcards.com</p>
+                        </div>
+                    </div>
                 </div>
-
-                <div>
-                    <strong>How do I block a card?</strong>
-                    <p>Click the Block button on any active card to temporarily disable it.</p>
-                </div>
-
-                <div>
-                    <strong>Need support?</strong>
-                    <p>Email: godo@bankcards.com</p>
-                </div>
-            </div>
-        </div>
-    `;
+            `;
         }
     }
-
 
     document.addEventListener("DOMContentLoaded", async () => {
         await loadUserInfo();
         await loadCards();
-
 
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', (e) => {

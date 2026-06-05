@@ -532,7 +532,6 @@
             const cardId = parseInt(el.dataset.id);
             const cardBalance = parseFloat(el.closest('tr').querySelector('td:nth-child(4)').textContent.replace('€', '').trim());
 
-            // Check if card has positive balance before attempting deletion
             if (cardBalance > 0) {
                 showToast("Cannot delete card with positive balance. Please withdraw funds first.", true);
                 return;

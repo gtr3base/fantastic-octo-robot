@@ -1,5 +1,6 @@
 package com.example.bankcards.service;
 
+import com.example.bankcards.dto.requests.CardTransferRequest;
 import com.example.bankcards.dto.requests.TransferRequest;
 import com.example.bankcards.dto.responses.CardResponse;
 import com.example.bankcards.entity.Card;
@@ -65,7 +66,7 @@ public class CardServiceTest {
     @Test
     @DisplayName("Transfer - Success")
     void transferBetweenOwnCards_Success() {
-        TransferRequest request = new TransferRequest(100L, 200L, 2000L);
+        TransferRequest request = new CardTransferRequest(100L, 200L, 2000L);
 
         when(cardRepository.findCardByIdAndOwnerId(100L, 1L)).thenReturn(Optional.of(fromCard));
         when(cardRepository.findCardByIdAndOwnerId(200L, 1L)).thenReturn(Optional.of(toCard));
@@ -82,7 +83,7 @@ public class CardServiceTest {
     @Test
     @DisplayName("Transfer - Fails when same card")
     void transferBetweenOwnCards_SameCard() {
-        TransferRequest request = new TransferRequest(100L, 100L, 2000L);
+        TransferRequest request = new CardTransferRequest(100L, 100L, 2000L);
 
         assertThatThrownBy(() -> cardService.transferBetweenOwnCards(1L, request))
                 .isInstanceOf(CardOperationException.class)
@@ -92,7 +93,7 @@ public class CardServiceTest {
     @Test
     @DisplayName("Transfer - Fails when Insufficient Funds")
     void transferBetweenOwnCards_InsufficientFunds() {
-        TransferRequest request = new TransferRequest(100L, 200L, 9000L);
+        TransferRequest request = new CardTransferRequest(100L, 200L, 9000L);
 
         when(cardRepository.findCardByIdAndOwnerId(100L, 1L)).thenReturn(Optional.of(fromCard));
         when(cardRepository.findCardByIdAndOwnerId(200L, 1L)).thenReturn(Optional.of(toCard));
@@ -106,7 +107,7 @@ public class CardServiceTest {
     @DisplayName("Transfer - Fails when Sender Card is Not Active")
     void transferBetweenOwnCards_NotActive() {
         fromCard.setStatus(CardStatus.BLOCKED);
-        TransferRequest request = new TransferRequest(100L, 200L, 1000L);
+        TransferRequest request = new CardTransferRequest(100L, 200L, 1000L);
 
         when(cardRepository.findCardByIdAndOwnerId(100L, 1L)).thenReturn(Optional.of(fromCard));
         when(cardRepository.findCardByIdAndOwnerId(200L, 1L)).thenReturn(Optional.of(toCard));
@@ -143,7 +144,7 @@ public class CardServiceTest {
     @Test
     @DisplayName("Delete Card - Fails when balance is > 0")
     void deleteCard_WithBalance() {
-        when(cardRepository.findCardById(100L)).thenReturn(Optional.of(fromCard)); // Balance is 5000L
+        when(cardRepository.findCardById(100L)).thenReturn(Optional.of(fromCard));  Balance is 5000L
 
         assertThatThrownBy(() -> cardService.deleteCard(100L))
                 .isInstanceOf(CardOperationException.class)
