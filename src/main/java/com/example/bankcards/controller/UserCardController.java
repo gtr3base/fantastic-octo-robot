@@ -6,7 +6,6 @@ import com.example.bankcards.dto.responses.CardResponse;
 import com.example.bankcards.service.CardService;
 import com.example.bankcards.service.UserService;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;

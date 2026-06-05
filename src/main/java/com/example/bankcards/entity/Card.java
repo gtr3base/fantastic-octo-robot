@@ -4,7 +4,6 @@ import com.example.bankcards.enums.CardStatus;
 import com.example.bankcards.util.MoneyConverter;
 import com.example.bankcards.util.YearMonthDateAttributeConverter;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
